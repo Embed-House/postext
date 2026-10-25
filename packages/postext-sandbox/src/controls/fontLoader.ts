@@ -24,11 +24,12 @@ import {
   baseFontFamily,
   featureFamilyParts,
   fontFeatureSettings,
+  setFigureStyleFamilies,
 } from 'postext';
 import type { PostextContent } from 'postext';
 import { getFontFile } from '../storage/fontStorage.js';
 import { fontsourceCssUrl, fontsourceId, parseFontsourceCss, parseUnicodeRange, fontsourceUrlAt, fontsourceVersionOf } from '../viewport/fontsourceSlices.js';
-import { isGenericFontFamily, isSystemFontFamily } from './systemFonts.js';
+import { isGenericFontFamily, isSystemFontFamily, takesFigureFeatures } from './systemFonts.js';
 
 const FONT_LOAD_TIMEOUT_MS = 3000;
 
@@ -167,6 +168,11 @@ import {
   type FontVariantUse,
 } from 'postext';
 export { collectFontUsage, hasLatinEmphasis, STANDARD_FONT_VARIANTS };
+
+// A style's figures (#1237) leave a face only the system has as it is: no
+// file declares it again with the features. The layout worker says the
+// same (`worker/layout.worker.ts`).
+setFigureStyleFamilies((family) => takesFigureFeatures(family, typeof document !== 'undefined' ? document.fonts : undefined));
 
 /**
  * Every family a configuration sets text in whose files the Sandbox loads:

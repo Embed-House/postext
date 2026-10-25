@@ -288,8 +288,7 @@ export interface FontMissingGlyphs {
  *  outlines reliably). */
 export type FontFileIssue =
   | { kind: 'variableFontDefaultInstance'; family: string; weight: number; style: 'normal' | 'italic'; defaultWeight: number }
-  | { kind: 'cffEmbeddedWhole'; family: string; weight: number; style: 'normal' | 'italic'; bytes: number }
-  | { kind: 'fontFeaturesMissing'; family: string; weight: number; style: 'normal' | 'italic'; features: string[] };
+  | { kind: 'cffEmbeddedWhole'; family: string; weight: number; style: 'normal' | 'italic'; bytes: number };
 
 /** Size from which a CFF face embedded whole is reported: 2 MB, about ten
  *  times a Latin text face, and a fraction of a CJK one (Source Han Serif
@@ -511,7 +510,6 @@ export class FontCache {
         };
         this.faces.push(face);
         this.checkVariableWeight(face);
-        this.checkFeatures(face);
         const family = spec.family.toLowerCase();
         const faces = this.byFamily.get(family) ?? [];
         faces.push({ ...spec, font: primary });
@@ -558,19 +556,6 @@ export class FontCache {
       }
     });
     return face.growing;
-  }
-
-  /** Report a face of a feature family (a style's figures, #1237) whose
-   *  file has none of some of its features: fontkit sets the font's own
-   *  figures there, as the browser does. Reported under the base family. */
-  private checkFeatures(face: LoadedFace): void {
-    const parts = featureFamilyParts(face.spec.family);
-    if (parts.features.length === 0) return;
-    const available = (face.primary as unknown as { embedder?: { font?: { availableFeatures?: readonly string[] } } }).embedder?.font?.availableFeatures;
-    if (!available) return;
-    const missing = parts.features.filter((f) => !available.includes(f));
-    if (missing.length === 0) return;
-    this.onFileIssue?.({ kind: 'fontFeaturesMissing', family: parts.family, weight: face.spec.weight, style: face.spec.style, features: missing });
   }
 
   /** Report a variable font asked for at a weight other than its default

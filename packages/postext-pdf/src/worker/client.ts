@@ -12,7 +12,6 @@ export type {
   PdfMissingGlyphWarning,
   PdfVariableFontWarning,
   PdfCffEmbeddedWholeWarning,
-  PdfFontFeaturesWarning,
   RenderProgress,
 } from '../pdf-backend/index.js';
 

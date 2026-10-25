@@ -4763,8 +4763,6 @@
     "warningsVariableFontDetail": "die Datei ist eine variable Schrift, und das PDF bettet ihre Standardinstanz ein, daher erscheint dieser Text in der Stärke __default__. Laden Sie eine statische Datei für die Stärke __weight__ hoch.",
     "warningsCffEmbeddedWholeTitle": "Große CFF-Schrift vollständig eingebettet",
     "warningsCffEmbeddedWholeDetail": "eine OpenType-CFF-Datei (.otf) mit __size__ MB wird vollständig ins PDF eingebettet; eine TrueType-Fassung (.ttf) desselben Schnitts wird auf die verwendeten Glyphen reduziert.",
-    "warningsFontFeaturesMissingTitle": "Ziffern fehlen in einer Schrift",
-    "warningsFontFeaturesMissingDetail": "die Dateien der Schrift haben das Feature __features__ nicht, daher behält dieser Text die eigenen Ziffern der Schrift. Die Schnitte, die Google Fonts und Fontsource ausliefern, lassen Mediävalziffern (onum) und Versalziffern (lnum) oft weg: Laden Sie die vollständigen Dateien der Schrift im Bedienfeld Schriften hoch.",
     "warningsPdfFontStale": "(Aus einem früheren PDF: Das Buch hat sich seitdem geändert.)",
     "warningsDanglingTypeRefTitle": "Unbekannter Ressourcentyp",
     "warningsDanglingTypeRefDetail": "der Ressourcentyp existiert nicht mehr; stattdessen gilt der Standard",

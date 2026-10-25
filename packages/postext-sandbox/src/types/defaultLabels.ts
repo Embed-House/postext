@@ -4226,8 +4226,6 @@ export const DEFAULT_LABELS: SandboxLabels = {
   warningsVariableFontDetail: 'the file is a variable font and the PDF embeds its default instance, so this text prints at weight __default__. Upload a static file for weight __weight__.',
   warningsCffEmbeddedWholeTitle: 'Large CFF font embedded whole',
   warningsCffEmbeddedWholeDetail: 'an OpenType CFF (.otf) file of __size__ MB goes into the PDF whole; a TrueType (.ttf) build of the same face is cut down to the glyphs used.',
-  warningsFontFeaturesMissingTitle: 'Figures missing from a font',
-  warningsFontFeaturesMissingDetail: 'the font\'s files have no __features__ feature, so this text keeps the font\'s own figures. The cuts that Google Fonts and Fontsource serve often leave old-style (onum) and lining (lnum) figures out: upload the font\'s full files in the Fonts panel.',
   warningsPdfFontStale: '(From an earlier PDF: the book has changed since.)',
   warningsDanglingTypeRefTitle: 'Unknown resource type',
   warningsDanglingTypeRefDetail: 'resource type no longer exists; a default is used',

@@ -102,9 +102,7 @@ export interface RenderToPdfOptions {
    *  a face has a glyph for (`missingGlyph`, once per face, after the pages
    *  are drawn); a variable font asked for at a weight other than its
    *  default instance (`variableFontDefaultInstance`); a CFF face over
-   *  2 MB embedded whole (`cffEmbeddedWhole`); a face whose file lacks a
-   *  feature a style's `figureStyle` asks for (`fontFeaturesMissing`); and
-   *  an image with no bytes
+   *  2 MB embedded whole (`cffEmbeddedWhole`); and an image with no bytes
    *  from `resourceBytes` (or bytes that did not decode), drawn as a
    *  placeholder and reported once per `fileId` as a `missingImage` warning
    *  carrying the page and the index of its document in `input`. Without
@@ -251,29 +249,12 @@ export interface PdfCffEmbeddedWholeWarning {
   message: string;
 }
 
-/** A style's figures (#1237) its font cannot set. */
-export interface PdfFontFeaturesWarning {
-  /** `fontFeaturesMissing`: a style asks a face for OpenType features its
-   *  file does not have (`onum`, `lnum`, `tnum`, `pnum`, by `figureStyle`),
-   *  so its text keeps the font's own figures there, on screen as in the
-   *  PDF. The cuts Google Fonts and Fontsource serve often leave `onum` and
-   *  `lnum` out; the font's full files have them. `family` is the family
-   *  the style names. */
-  kind: 'fontFeaturesMissing';
-  family: string;
-  weight: number;
-  style: 'normal' | 'italic';
-  features: string[];
-  message: string;
-}
-
 /** A non-fatal problem met while rendering a PDF. The render goes on; the
  *  output differs from what the document asked for in the way described:
  *  a font fallback ({@link PdfFontFallbackWarning}), characters a face
  *  lacks ({@link PdfMissingGlyphWarning}), a variable font set at its
  *  default weight ({@link PdfVariableFontWarning}), a CFF face embedded
- *  whole ({@link PdfCffEmbeddedWholeWarning}), figures a face cannot set
- *  ({@link PdfFontFeaturesWarning}), right-to-left or joining
+ *  whole ({@link PdfCffEmbeddedWholeWarning}), right-to-left or joining
  *  text shaped without HarfBuzz ({@link PdfComplexShapingWarning}), or
  *  one of the engine's
  *  render warnings (`RenderWarning`: an image painted as a placeholder,
@@ -283,7 +264,6 @@ export type PdfWarning =
   | PdfMissingGlyphWarning
   | PdfVariableFontWarning
   | PdfCffEmbeddedWholeWarning
-  | PdfFontFeaturesWarning
   | PdfComplexShapingWarning
   | PdfPrintWarning
   | RenderWarning;
@@ -317,14 +297,8 @@ function missingGlyphWarning(m: FontMissingGlyphs): PdfMissingGlyphWarning {
   };
 }
 
-function fileIssueWarning(issue: FontFileIssue): PdfVariableFontWarning | PdfCffEmbeddedWholeWarning | PdfFontFeaturesWarning {
+function fileIssueWarning(issue: FontFileIssue): PdfVariableFontWarning | PdfCffEmbeddedWholeWarning {
   const face = `"${issue.family}" ${faceName(issue.weight, issue.style)}`;
-  if (issue.kind === 'fontFeaturesMissing') {
-    return {
-      ...issue,
-      message: `postext-pdf: ${face} has no ${issue.features.join(', ')} feature; text whose figureStyle asks for it keeps the font's own figures. Use the font's full files.`,
-    };
-  }
   if (issue.kind === 'variableFontDefaultInstance') {
     return {
       ...issue,

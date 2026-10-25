@@ -2463,14 +2463,16 @@ Sandbox: the **Figures** field next to each style's typeface in the Design panel
   default figures unless it sets `figureStyle`. A level without one takes `headings.figureStyle`; a heading
   style's applies over the family of the level it is used on. `'default'` undoes inherited figures. A design
   text element has its own family ('EB Garamond' by default): the body's figures never reach it.
-- A font without the feature keeps its own figures; a generic family (`serif`) takes none; a family the host has
-  no file of (installed only on the reader's system) cannot get the features in the browser and falls back
-  there: ship the face in `fonts[]` (a catalogue family also loads, but see the next point). An unknown value is a `unknownConfigValue` warning, read as unset.
+- A font without the feature keeps its own figures; a generic family (`serif`)
+  takes none. A family the host has no file of (a face installed only on the reader's system, which the Sandbox
+  does not fetch) takes no figure style: its text keeps that font's own figures, in the font itself. Ship the
+  face in `fonts[]` under that name and it gets them. A host that sets text in faces it has no files of tells the
+  engine which families can take features with `setFigureStyleFamilies((family) => boolean)` (from `postext`;
+  the Sandbox registers it in the page and its layout worker). An unknown value is a `unknownConfigValue`
+  warning, read as unset.
 - Catalogue cuts often lack the features: the files Google Fonts and Fontsource serve often leave `onum` and `lnum`
-  out (Source Serif 4's latin file keeps `pnum` and `tnum` only), so a catalogue family keeps its own figures
-  whatever `figureStyle` says. The foundry's full files have them: ship those in `fonts[]`. The PDF reports a face
-  without them as `fontFeaturesMissing` (postext-pdf `PdfFontFeaturesWarning`: family, weight, style, the missing
-  `features`), in the Sandbox Checks panel after a PDF is made and printed by `postext`.
+  out (Source Serif 4's latin file keeps `pnum` and `tnum` only), and a style that asks for them then keeps the
+  font's own figures. The foundry's full files have them: ship those in `fonts[]`.
 - Measured with the features: canvas, HTML, PDF and both EPUB layouts break lines alike. Font strings and some
   warnings name a feature family `Base@onum`, `Base@lnum+tnum` (the base family's files with the features).
   The CLI (Skia sets no features) registers a copy whose cmap maps the digits to the feature's glyphs (single
@@ -2484,8 +2486,7 @@ Sandbox: the **Figures** field next to each style's typeface in the Design panel
   `python3 -c "from fontTools.ttLib import TTFont as T; import sys; f=T(sys.argv[1]); print(sorted({r.FeatureTag for r in f['GSUB'].table.FeatureList.FeatureRecord}))" fonts/X.woff2`
   (`onum`, `lnum`, `tnum`, `pnum` as the config asks). A file without them sets its default figures whatever the
   config says; when those are already old-style (some book faces), `'oldstyle'` changes nothing and the tables
-  need `'lining-tabular'` to get lining figures. A `fontFeaturesMissing` among the PDF warnings `postext` prints
-  means a shipped file still lacks one.
+  need `'lining-tabular'` to get lining figures. Nothing reports a missing feature, so check the files.
 
 ---------------------------------------------------------------------------------
 

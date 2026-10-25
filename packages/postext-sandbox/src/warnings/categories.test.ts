@@ -23,7 +23,6 @@ describe('warningCategory', () => {
     expect(warningCategory('missingGlyph')).toBe('fonts');
     expect(warningCategory('variableFontDefaultInstance')).toBe('fonts');
     expect(warningCategory('cffEmbeddedWhole')).toBe('fonts');
-    expect(warningCategory('fontFeaturesMissing')).toBe('fonts');
   });
   it('files the comic warnings by what they point at', () => {
     expect(warningCategory('comicSplitSyntax')).toBe('markup');

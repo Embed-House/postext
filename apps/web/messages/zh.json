@@ -4762,8 +4762,6 @@
     "warningsVariableFontDetail": "该文件是可变字体，PDF嵌入的是它的默认实例，所以这段文字以字重__default__印出。请上传字重__weight__的静态字体文件。",
     "warningsCffEmbeddedWholeTitle": "大型CFF字体整体嵌入",
     "warningsCffEmbeddedWholeDetail": "__size__ MB的OpenType CFF（.otf）文件会整体嵌入PDF；同一字体的TrueType（.ttf）版本则会裁剪到只含用到的字形。",
-    "warningsFontFeaturesMissingTitle": "字体缺少数字样式",
-    "warningsFontFeaturesMissingDetail": "该字体的文件没有 __features__ 功能，因此这段文字仍使用字体自带的数字。Google Fonts 和 Fontsource 提供的字体切片常常去掉旧式数字（onum）和等高数字（lnum）：请在“字体”面板中上传该字体的完整文件。",
     "warningsPdfFontStale": "（来自之前的PDF：此后书已有改动。）",
     "warningsDanglingTypeRefTitle": "未知的资源类型",
     "warningsDanglingTypeRefDetail": "资源类型已不存在；改用默认类型",

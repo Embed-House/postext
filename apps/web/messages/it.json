@@ -4763,8 +4763,6 @@
     "warningsVariableFontDetail": "il file è un font variabile e il PDF ne incorpora l’istanza predefinita, quindi questo testo si stampa con peso __default__. Carica un file statico per il peso __weight__.",
     "warningsCffEmbeddedWholeTitle": "Font CFF grande incorporato per intero",
     "warningsCffEmbeddedWholeDetail": "un file OpenType CFF (.otf) di __size__ MB entra nel PDF per intero; una versione TrueType (.ttf) dello stesso carattere si riduce ai glifi usati.",
-    "warningsFontFeaturesMissingTitle": "Cifre assenti da un font",
-    "warningsFontFeaturesMissingDetail": "i file del font non hanno la funzione __features__, quindi questo testo mantiene le cifre proprie del font. I tagli che distribuiscono Google Fonts e Fontsource spesso lasciano fuori le cifre elzeviriane (onum) e quelle allineate (lnum): carica i file completi del font nel pannello Font.",
     "warningsPdfFontStale": "(Da un PDF precedente: nel frattempo il libro è cambiato.)",
     "warningsDanglingTypeRefTitle": "Tipo di risorsa sconosciuto",
     "warningsDanglingTypeRefDetail": "il tipo di risorsa non esiste più; si usa quello predefinito",

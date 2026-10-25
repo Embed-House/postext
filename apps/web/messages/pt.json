@@ -4759,8 +4759,6 @@
     "warningsVariableFontDetail": "o arquivo é uma fonte variável e o PDF incorpora a instância padrão, por isso este texto sai com peso __default__. Envie um arquivo estático para o peso __weight__.",
     "warningsCffEmbeddedWholeTitle": "Fonte CFF grande incorporada inteira",
     "warningsCffEmbeddedWholeDetail": "um arquivo OpenType CFF (.otf) de __size__ MB entra inteiro no PDF; uma versão TrueType (.ttf) da mesma fonte é reduzida aos glifos usados.",
-    "warningsFontFeaturesMissingTitle": "Algarismos ausentes de uma fonte",
-    "warningsFontFeaturesMissingDetail": "os arquivos da fonte não têm o recurso __features__, então este texto mantém os algarismos próprios da fonte. Os cortes que o Google Fonts e o Fontsource distribuem costumam deixar de fora os algarismos de estilo antigo (onum) e os alinhados (lnum): envie os arquivos completos da fonte no painel Fontes.",
     "warningsPdfFontStale": "(De um PDF anterior: o livro mudou desde então.)",
     "warningsDanglingTypeRefTitle": "Tipo de recurso desconhecido",
     "warningsDanglingTypeRefDetail": "o tipo de recurso não existe mais; um padrão é usado",

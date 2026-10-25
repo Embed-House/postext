@@ -4762,8 +4762,6 @@
     "warningsVariableFontDetail": "le fichier est une police variable et le PDF incorpore son instance par défaut : ce texte s’imprime donc en graisse __default__. Chargez un fichier statique pour la graisse __weight__.",
     "warningsCffEmbeddedWholeTitle": "Grande police CFF incorporée en entier",
     "warningsCffEmbeddedWholeDetail": "un fichier OpenType CFF (.otf) de __size__ Mo entre en entier dans le PDF ; une version TrueType (.ttf) du même caractère est réduite aux glyphes utilisés.",
-    "warningsFontFeaturesMissingTitle": "Chiffres absents d’une police",
-    "warningsFontFeaturesMissingDetail": "les fichiers de la police n’ont pas la fonction __features__ : ce texte garde donc les chiffres propres à la police. Les découpes que servent Google Fonts et Fontsource laissent souvent de côté les chiffres elzéviriens (onum) et les chiffres alignés (lnum) : chargez les fichiers complets de la police dans le panneau Polices.",
     "warningsPdfFontStale": "(D’un PDF précédent : le livre a changé depuis.)",
     "warningsDanglingTypeRefTitle": "Type de ressource inconnu",
     "warningsDanglingTypeRefDetail": "le type de ressource n’existe plus ; une valeur par défaut est utilisée",

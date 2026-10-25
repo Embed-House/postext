@@ -889,6 +889,7 @@ describe("package exports", () => {
       "baseFontFamily",
       "fontFeatureSettings",
       "fontVariantNumeric",
+      "setFigureStyleFamilies",
       "freezeFontFeatures",
       "addFeatureFaces",
       "declareFeatureFaces",

@@ -4203,8 +4203,6 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     warningsVariableFontDetail: t("warningsVariableFontDetail"),
     warningsCffEmbeddedWholeTitle: t("warningsCffEmbeddedWholeTitle"),
     warningsCffEmbeddedWholeDetail: t("warningsCffEmbeddedWholeDetail"),
-    warningsFontFeaturesMissingTitle: t("warningsFontFeaturesMissingTitle"),
-    warningsFontFeaturesMissingDetail: t("warningsFontFeaturesMissingDetail"),
     warningsPdfFontStale: t("warningsPdfFontStale"),
     warningsDanglingTypeRefTitle: t("warningsDanglingTypeRefTitle"),
     warningsDanglingTypeRefDetail: t("warningsDanglingTypeRefDetail"),

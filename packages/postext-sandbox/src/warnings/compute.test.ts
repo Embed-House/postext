@@ -1048,8 +1048,6 @@ describe('PDF font warnings (#196)', () => {
         { kind: 'missingGlyph', family: 'Noto Serif TC', weight: 400, style: 'normal', characters: ['，'], message: '' },
         { kind: 'variableFontDefaultInstance', family: 'Noto Serif SC', weight: 700, style: 'normal', defaultWeight: 400, message: '' },
         { kind: 'cffEmbeddedWhole', family: 'Source Han Serif TW', weight: 400, style: 'normal', bytes: 7_936_412, message: '' },
-        { kind: 'fontFeaturesMissing', family: 'Source Serif 4', weight: 400, style: 'normal', features: ['onum'], message: '' },
-        { kind: 'fontFeaturesMissing', family: 'Source Serif 4', weight: 400, style: 'normal', features: ['onum'], message: '' },
       ],
     });
     const pdf = warnings.filter((w) => w.id.startsWith('pdf-'));
@@ -1057,7 +1055,6 @@ describe('PDF font warnings (#196)', () => {
       { kind: 'missingGlyph', family: 'Noto Serif TC', weight: 400, style: 'normal', characters: ['，', '！'] },
       { kind: 'variableFontDefaultInstance', family: 'Noto Serif SC', weight: 700, style: 'normal', defaultWeight: 400 },
       { kind: 'cffEmbeddedWhole', family: 'Source Han Serif TW', weight: 400, style: 'normal', bytes: 7_936_412 },
-      { kind: 'fontFeaturesMissing', family: 'Source Serif 4', weight: 400, style: 'normal', features: ['onum'] },
     ]);
     expect(pdf.every((w) => w.sourceStart === undefined)).toBe(true);
   });

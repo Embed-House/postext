@@ -73,7 +73,7 @@ describe('figure styles in the PDF (#1237)', () => {
     expect([...asked]).toEqual(['Source Serif 4']);
   }, 60_000);
 
-  it('reports a face whose file has no feature a style asks for', async () => {
+  it('a face whose file lacks a feature keeps the font\'s own figures, and nothing is reported', async () => {
     // Lora has `pnum` and `tnum`, no `onum`.
     const lora = readFileSync(new URL('../../../../apps/web/public/fonts/Lora-Regular.ttf', import.meta.url));
     const config: PostextConfig = {
@@ -84,10 +84,9 @@ describe('figure styles in the PDF (#1237)', () => {
       headings: { fontFamily: 'Lora' },
     };
     const doc = buildDocument({ markdown: 'In 1984 and 2024.' }, config);
-    const warnings: { kind: string; family?: string; features?: string[]; message?: string }[] = [];
-    await renderToPdf(doc, { accessible: false, fontProvider: async () => new Uint8Array(lora), onWarning: (w) => warnings.push(w as never) });
-    const missing = warnings.filter((w) => w.kind === 'fontFeaturesMissing');
-    expect(missing.map((w) => [w.family, w.features])).toEqual([['Lora', ['onum']]]);
-    expect(missing[0]!.message).toContain('"Lora" 400 has no onum feature');
+    const warnings: { kind: string }[] = [];
+    const bytes = await renderToPdf(doc, { accessible: false, fontProvider: async () => new Uint8Array(lora), onWarning: (w) => warnings.push(w as never) });
+    expect(bytes.byteLength).toBeGreaterThan(1000);
+    expect(warnings).toEqual([]);
   }, 60_000);
 });

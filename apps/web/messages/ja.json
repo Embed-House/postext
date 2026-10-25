@@ -4762,8 +4762,6 @@
     "warningsVariableFontDetail": "このファイルは可変フォントで、PDFには既定のインスタンスが埋め込まれるため、このテキストはウェイト__default__で印字されます。ウェイト__weight__の静的なファイルをアップロードしてください。",
     "warningsCffEmbeddedWholeTitle": "大きなCFFフォントの全体埋め込み",
     "warningsCffEmbeddedWholeDetail": "__size__ MBのOpenType CFF（.otf）ファイルは丸ごとPDFに入ります。同じ書体のTrueType（.ttf）版なら、使ったグリフだけに絞り込まれます。",
-    "warningsFontFeaturesMissingTitle": "フォントにない数字の字形",
-    "warningsFontFeaturesMissingDetail": "このフォントのファイルには __features__ の機能がないため、この文字はフォント本来の数字のままです。Google Fonts や Fontsource が配信するサブセットでは、オールドスタイル数字（onum）やライニング数字（lnum）が省かれていることがよくあります。「フォント」パネルでフォントの完全なファイルをアップロードしてください。",
     "warningsPdfFontStale": "（以前のPDFの結果です。その後、本が変更されています。）",
     "warningsDanglingTypeRefTitle": "不明なリソースの種類",
     "warningsDanglingTypeRefDetail": "リソースの種類が存在しなくなったため、既定の種類を使います。",

@@ -813,7 +813,7 @@ export { exportStandInOf, fontFallbackOf, fontFallbackFamilies, hasOwnStyle } fr
 export { glyphFallbacks, documentFontTexts, registerFontCoverage, forgetFontCoverage, installGlyphProbe, GLYPH_PROBE_FAMILY, GLYPH_FALLBACK_LISTED } from './fonts/glyphFallback.js';
 export type { GlyphFallback, GlyphFallbackOptions } from './fonts/glyphFallback.js';
 export { sfntCodePointRanges } from './fonts/cmap.js';
-export { FIGURE_STYLES, isFigureStyle, figureFeatures, withFigureStyle, featureFamily, featureFamilyParts, isFeatureFamily, baseFontFamily, fontFeatureSettings, fontVariantNumeric } from './fonts/figureStyle.js';
+export { FIGURE_STYLES, isFigureStyle, figureFeatures, withFigureStyle, featureFamily, featureFamilyParts, isFeatureFamily, baseFontFamily, fontFeatureSettings, fontVariantNumeric, setFigureStyleFamilies } from './fonts/figureStyle.js';
 export type { FigureFeature, FeatureFamilyParts } from './fonts/figureStyle.js';
 export { freezeFontFeatures } from './fonts/freezeFeatures.js';
 export { addFeatureFaces, declareFeatureFaces, rememberFaceSource } from './fonts/featureFaces.js';

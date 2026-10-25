@@ -481,8 +481,6 @@ export interface SandboxLabels {
   warningsVariableFontDetail: string;
   warningsCffEmbeddedWholeTitle: string;
   warningsCffEmbeddedWholeDetail: string;
-  warningsFontFeaturesMissingTitle: string;
-  warningsFontFeaturesMissingDetail: string;
   warningsPdfFontStale: string;
   warningsStorageUnavailableTitle: string;
   warningsStorageUnavailableDetail: string;

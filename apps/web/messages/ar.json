@@ -4762,8 +4762,6 @@
     "warningsVariableFontDetail": "الملف خط متغيّر ويضمّن PDF نسخته الافتراضية، لذا يُطبع هذا النص بالوزن __default__. ارفع ملفًا ثابتًا للوزن __weight__.",
     "warningsCffEmbeddedWholeTitle": "خط CFF كبير مضمّن كاملًا",
     "warningsCffEmbeddedWholeDetail": "ملف OpenType CFF (⁦.otf⁩) حجمه __size__ MB يدخل PDF كاملًا؛ أما نسخة TrueType (⁦.ttf⁩) من الخط نفسه فتُقتطع إلى الأشكال الحرفية المستخدمة.",
-    "warningsFontFeaturesMissingTitle": "أرقام لا يملكها الخط",
-    "warningsFontFeaturesMissingDetail": "ملفات الخط لا تملك الميزة __features__، فيبقى هذا النص بأرقام الخط نفسه. والنسخ المقتطعة التي يقدّمها Google Fonts وFontsource كثيرًا ما تُسقط الأرقام القديمة الطراز (onum) والأرقام المصطفّة (lnum): ارفع ملفات الخط الكاملة في لوحة الخطوط.",
     "warningsPdfFontStale": "(من PDF سابق: تغيّر الكتاب منذ ذلك الحين.)",
     "warningsDanglingTypeRefTitle": "نوع مورد غير معروف",
     "warningsDanglingTypeRefDetail": "نوع المورد لم يعد موجودًا؛ يُستخدم النوع الافتراضي",

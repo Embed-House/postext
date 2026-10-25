@@ -346,3 +346,19 @@ describe('feature families (a style\'s figures, #1237)', () => {
     expect(asFeaturePayloads('Lora', payloads)).toBe(payloads);
   });
 });
+
+describe('figures of a face only the system has (#1237)', () => {
+  it('leave it as it is, unless the book carries files under that name', async () => {
+    const { takesFigureFeatures } = await import('./systemFonts.js');
+    expect(takesFigureFeatures('Lora')).toBe(true);
+    expect(takesFigureFeatures('Palatino')).toBe(false);
+    expect(takesFigureFeatures('Palatino', [{ family: '"Palatino"' }])).toBe(true);
+    expect(takesFigureFeatures('Palatino', [{ family: 'Lora' }])).toBe(false);
+  });
+
+  it('resolve such a style to the family itself on the page', () => {
+    const config = { bodyText: { fontFamily: 'Palatino', figureStyle: 'oldstyle' as const } };
+    expect(configFontUses(config).has('Palatino@onum')).toBe(false);
+    expect([...configFontUses(config).keys()]).toContain('Palatino');
+  });
+});

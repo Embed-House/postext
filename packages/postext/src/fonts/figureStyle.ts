@@ -108,17 +108,36 @@ export function featureFamily(family: string, features: readonly FigureFeature[]
   return list.length > 0 ? `${base}${SEPARATOR}${list.join('+')}` : base;
 }
 
+/** Whether a family can be declared with features; the host's answer, by
+ *  default every family but a generic one. */
+let takesFeatures: (family: string) => boolean = () => true;
+
+/**
+ * Tell the engine which families a host can declare with features (#1237):
+ * one whose files it has. A family it cannot (a face only installed on the
+ * reader's system, which no file declares again under a feature family's
+ * name) takes no figure style: its text keeps the font's own figures in
+ * the family itself, instead of a fallback face. Set it before the first
+ * build, in every thread that lays out (a layout worker too); `undefined`
+ * gives every family back. Configurations resolved before keep what they
+ * resolved to.
+ */
+export function setFigureStyleFamilies(test: ((family: string) => boolean) | undefined): void {
+  takesFeatures = test ?? (() => true);
+}
+
 /**
  * The family a style sets its text in once its `figureStyle` applies:
  * unset keeps `fontFamily` as it is (with the figures it inherits),
  * `'default'` sets its base family, any other value the feature family of
  * the base family. A font stack is cut to its first family
- * (`primaryFontFamily`); a generic family takes no features.
+ * (`primaryFontFamily`); a generic family, and one the host cannot declare
+ * with features ({@link setFigureStyleFamilies}), takes no features.
  */
 export function withFigureStyle(fontFamily: string, style: FigureStyle | undefined): string {
   if (!isFigureStyle(style)) return fontFamily;
   const base = unquoted(baseFontFamily(primaryFontFamily(fontFamily)));
-  if (isGenericFamily(base)) return base;
+  if (isGenericFamily(base) || !takesFeatures(base)) return base;
   return featureFamily(base, figureFeatures(style));
 }
 
@@ -134,7 +153,23 @@ export function fontVariantNumeric(features: readonly FigureFeature[]): string {
   return features.map((f) => CSS_VALUE[f]).join(' ');
 }
 
-const FEATURE_FONT_RE = /font:([^;"<>]*?)('|&#39;|&#x27;|&apos;)([^;"<>]+?)@((?:onum|lnum|pnum|tnum)(?:\+(?:onum|lnum|pnum|tnum))*)\2(?=[;"]|&quot;)/g;
+/** The quotes a family takes in a style attribute, as written or escaped. */
+const QUOTES = ["'", '&#39;', '&#x27;', '&apos;'];
+
+/** A `font:` value (`400 16px 'Lora@onum'`) whose family is a feature
+ *  family in quotes, in the base family followed by the declaration of its
+ *  figures; undefined for any other value. */
+function featureFontValue(value: string): string | undefined {
+  for (const q of QUOTES) {
+    if (value.length < 2 * q.length || !value.endsWith(q)) continue;
+    const open = value.lastIndexOf(q, value.length - q.length - 1);
+    if (open < 0) return undefined;
+    const parts = featureFamilyParts(value.slice(open + q.length, value.length - q.length));
+    if (parts.features.length === 0) return undefined;
+    return `${value.slice(0, open)}${q}${parts.family}${q};font-variant-numeric:${fontVariantNumeric(parts.features)}`;
+  }
+  return undefined;
+}
 
 /**
  * CSS (a style attribute's declarations, an HTML page's markup) with each
@@ -143,10 +178,38 @@ const FEATURE_FONT_RE = /font:([^;"<>]*?)('|&#39;|&#x27;|&apos;)([^;"<>]+?)@((?:
  * set in the base family, followed by the `font-variant-numeric` of its
  * features: a page sets the figures with the base family's faces as any
  * host declares them. The `font` shorthand resets `font-variant-numeric`,
- * so it follows the shorthand it belongs to.
+ * so it follows the shorthand it belongs to. Read in one pass: a
+ * declaration ends at `;`, at the attribute's `"` (or `&quot;`), or at a
+ * tag's bracket.
  */
 export function featureFontCss(css: string): string {
   if (!css.includes('@')) return css;
-  return css.replace(FEATURE_FONT_RE, (_whole, head: string, quote: string, family: string, tags: string) =>
-    `font:${head}${quote}${family}${quote};font-variant-numeric:${fontVariantNumeric(tags.split('+') as FigureFeature[])}`);
+  let out = '';
+  let from = 0;
+  for (let at = css.indexOf('font:'); at >= 0; at = css.indexOf('font:', at + 5)) {
+    const start = at + 5;
+    let end = start;
+    while (end < css.length) {
+      const c = css[end];
+      if (c === ';' || c === '"' || c === '<' || c === '>') break;
+      if (c === '&') {
+        // An entity is one character: `&#39;` quotes the family.
+        if (css.startsWith('&quot;', end)) break;
+        const semi = css.indexOf(';', end);
+        if (semi > end && semi - end <= 8) {
+          end = semi + 1;
+          continue;
+        }
+      }
+      end++;
+    }
+    const rewritten = featureFontValue(css.slice(start, end));
+    if (rewritten !== undefined) {
+      out += `${css.slice(from, start)}${rewritten}`;
+      from = end;
+    }
+    // No declaration holds another: the next is looked for past this one.
+    at = Math.max(at, end - 5);
+  }
+  return out + css.slice(from);
 }

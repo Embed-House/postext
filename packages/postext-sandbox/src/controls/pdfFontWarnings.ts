@@ -7,7 +7,7 @@ import type { PdfFontWarning } from 'postext-pdf';
  *  they are marked as from an earlier PDF, and another book drops them. A
  *  font fallback is left out: the provider's italic-to-upright stand-in is
  *  routine in the Sandbox. */
-export type PdfFontCheck = Extract<PdfFontWarning, { kind: 'missingGlyph' | 'variableFontDefaultInstance' | 'cffEmbeddedWhole' | 'fontFeaturesMissing' }>;
+export type PdfFontCheck = Extract<PdfFontWarning, { kind: 'missingGlyph' | 'variableFontDefaultInstance' | 'cffEmbeddedWhole' }>;
 
 /** The parts of the Sandbox state a PDF is generated from, as far as the
  *  font checks need them. */
@@ -50,7 +50,7 @@ const listeners = new Set<() => void>();
 
 /** Whether a PDF warning is one the Checks panel lists. */
 export function isPdfFontCheck(warning: { kind: string }): warning is PdfFontCheck {
-  return warning.kind === 'missingGlyph' || warning.kind === 'variableFontDefaultInstance' || warning.kind === 'cffEmbeddedWhole' || warning.kind === 'fontFeaturesMissing';
+  return warning.kind === 'missingGlyph' || warning.kind === 'variableFontDefaultInstance' || warning.kind === 'cffEmbeddedWhole';
 }
 
 /** The font warnings of the last PDF generated. */

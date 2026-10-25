@@ -16,6 +16,7 @@ import {
   figureFeatures,
   fontFeatureSettings,
   fontVariantNumeric,
+  setFigureStyleFamilies,
   withFigureStyle,
 } from '../fonts/figureStyle.js';
 import { stripBodyTextDefaults, stripCaptionStyleDefaults, stripHeadingsDefaults, stripParagraphStylesDefaults, stripTableStyleDefaults } from '../defaults/index.js';
@@ -64,6 +65,15 @@ describe('feature families (#1237)', () => {
     expect(withFigureStyle("'EB Garamond', Georgia, serif", 'oldstyle')).toBe('EB Garamond@onum');
     expect(withFigureStyle('"Optima 105"', 'oldstyle')).toBe('Optima 105@onum');
     expect(withFigureStyle('serif', 'oldstyle')).toBe('serif');
+    // A family the host cannot declare with features keeps its own figures.
+    setFigureStyleFamilies((family) => family !== 'Palatino');
+    try {
+      expect(withFigureStyle('Palatino', 'oldstyle')).toBe('Palatino');
+      expect(withFigureStyle('Lora', 'oldstyle')).toBe('Lora@onum');
+    } finally {
+      setFigureStyleFamilies(undefined);
+    }
+    expect(withFigureStyle('Palatino', 'oldstyle')).toBe('Palatino@onum');
     expect(featureFamilyParts('Lora@lnum+tnum')).toEqual({ family: 'Lora', features: ['lnum', 'tnum'] });
     expect(featureFamilyParts('"Lora@onum"')).toEqual({ family: 'Lora', features: ['onum'] });
     // A family whose name holds an @ that is not followed by features is
@@ -134,6 +144,12 @@ describe('feature families (#1237)', () => {
     expect(featureFontCss("font:400 16px 'Lora@onum';color:#000")).toBe("font:400 16px 'Lora';font-variant-numeric:oldstyle-nums;color:#000");
     expect(featureFontCss('font:400 16px &#39;Lora@lnum+tnum&#39;&quot;')).toBe('font:400 16px &#39;Lora&#39;;font-variant-numeric:lining-nums tabular-nums&quot;');
     expect(featureFontCss('mail me@onum.org')).toBe('mail me@onum.org');
+    // Read in one pass: long runs of what a declaration could start with.
+    for (const css of [`font:${'font:!'.repeat(50_000)}@`, `font:'${"'!".repeat(50_000)}@`, `font:${'&#39;'.repeat(50_000)}@`]) {
+      const start = performance.now();
+      expect(featureFontCss(css)).toBe(css);
+      expect(performance.now() - start).toBeLessThan(500);
+    }
   });
 
   it('are listed with the faces a host loads, in the weights and slants of their base family', () => {

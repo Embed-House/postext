@@ -29,7 +29,6 @@ export function warningCategory(kind: WarningPayload['kind']): WarningCategory {
     case 'missingGlyph':
     case 'variableFontDefaultInstance':
     case 'cffEmbeddedWhole':
-    case 'fontFeaturesMissing':
       return 'fonts';
     case 'unknownResourceId':
     case 'figureWordsShared':

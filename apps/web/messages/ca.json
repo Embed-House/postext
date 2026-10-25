@@ -4762,8 +4762,6 @@
     "warningsVariableFontDetail": "el fitxer és una font variable i el PDF n'incrusta la instància per defecte, així que aquest text s'imprimeix amb gruix __default__. Puja un fitxer estàtic per al gruix __weight__.",
     "warningsCffEmbeddedWholeTitle": "Font CFF gran incrustada sencera",
     "warningsCffEmbeddedWholeDetail": "un fitxer OpenType CFF (.otf) de __size__ MB entra sencer al PDF; una versió TrueType (.ttf) de la mateixa font es redueix als glifs utilitzats.",
-    "warningsFontFeaturesMissingTitle": "Xifres que la font no té",
-    "warningsFontFeaturesMissingDetail": "els fitxers de la font no tenen la funció __features__, de manera que aquest text conserva les xifres pròpies de la font. Els talls que serveixen Google Fonts i Fontsource sovint deixen fora les xifres elzevirianes (onum) i les alineades (lnum): puja els fitxers complets de la font al tauler Fonts.",
     "warningsPdfFontStale": "(D'un PDF anterior: el llibre ha canviat des d'aleshores.)",
     "warningsDanglingTypeRefTitle": "Tipus de recurs desconegut",
     "warningsDanglingTypeRefDetail": "el tipus de recurs ja no existeix; se n'utilitza un per defecte",

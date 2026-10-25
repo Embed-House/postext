@@ -217,7 +217,6 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'missingGlyph':
     case 'variableFontDefaultInstance':
     case 'cffEmbeddedWhole':
-    case 'fontFeaturesMissing':
       return Type;
     case 'comicSplitSyntax':
     case 'comicSplitOverflow':
@@ -550,8 +549,6 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsVariableFontTitle;
     case 'cffEmbeddedWhole':
       return labels.warningsCffEmbeddedWholeTitle;
-    case 'fontFeaturesMissing':
-      return labels.warningsFontFeaturesMissingTitle;
     case 'comicSplitSyntax':
       return labels.warningsComicSplitSyntaxTitle;
     case 'comicSplitOverflow':
@@ -1046,8 +1043,6 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels, locale
       return pdfFontDetail(payload, labels, labels.warningsVariableFontDetail.replace('__default__', String(payload.defaultWeight)).replace('__weight__', String(payload.weight)));
     case 'cffEmbeddedWhole':
       return pdfFontDetail(payload, labels, labels.warningsCffEmbeddedWholeDetail.replace('__size__', (payload.bytes / (1024 * 1024)).toFixed(1)));
-    case 'fontFeaturesMissing':
-      return pdfFontDetail(payload, labels, labels.warningsFontFeaturesMissingDetail.replace('__features__', payload.features.join(', ')));
     case 'comicSplitSyntax':
       return `split · ${payload.message} — ${labels.warningsComicSplitSyntaxDetail}`;
     case 'comicSplitOverflow':
@@ -1109,8 +1104,7 @@ function isFontWarning(kind: WarningPayload['kind']): boolean {
     kind === 'duplicateFontVariant' ||
     kind === 'missingGlyph' ||
     kind === 'variableFontDefaultInstance' ||
-    kind === 'cffEmbeddedWhole' ||
-    kind === 'fontFeaturesMissing'
+    kind === 'cffEmbeddedWhole'
   );
 }
 
