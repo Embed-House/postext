@@ -796,7 +796,7 @@ class Emitter {
         const word = sliceRun(piece, a, b);
         const slot = `x${++this.markWords}`;
         this.slots.push({ key: slot, kind: 'mark', correct: [] });
-        out.push(chipRun(this.ids.mark, word, word.sourceMap[0] ?? src, { exercise: { ex: this.ex.id, slot } }));
+        out.push(chipRun(this.ids.markPlain, word, word.sourceMap[0] ?? src, { exercise: { ex: this.ex.id, slot } }));
         last = b;
       }
       if (last < len) out.push(sliceRun(piece, last));
