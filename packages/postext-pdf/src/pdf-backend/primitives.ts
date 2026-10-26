@@ -1343,7 +1343,7 @@ export function drawTextPx(
   if (!text) return;
   if (ligatureBreaks && !ctx.vertical && hasBreakableLigature(text)) {
     const pieces = brokenPieces([{ text, width: textAdvancePx(font, text, sizePx, ctx.trackingPx ?? 0).advance }], font, sizePx, ctx.trackingPx ?? 0);
-    if (drawMeasuredTextPx(ctx, pieces, xPx, baselinePx, font, sizePx, color, ctx.trackingPx ?? 0, actualText ?? text)) return;
+    if (drawMeasuredTextPx(ctx, pieces, xPx, baselinePx, font, sizePx, color, ctx.trackingPx ?? 0, actualText)) return;
   }
   outline ??= ctx.textOutline;
   if (ctx.vertical) {
@@ -1426,10 +1426,7 @@ export function drawMeasuredTextPx(
   trackingPx = 0,
   actualText?: string,
 ): boolean {
-  if (ligatureBreaks && pieces.some((p) => hasBreakableLigature(p.text))) {
-    actualText ??= pieces.map((p) => p.text).join('');
-    pieces = brokenPieces(pieces, font, sizePx, trackingPx);
-  }
+  if (ligatureBreaks && pieces.some((p) => hasBreakableLigature(p.text))) pieces = brokenPieces(pieces, font, sizePx, trackingPx);
   if (ctx.vertical) {
     // Down the column each piece starts where the layout put it, in one
     // span that reads as the line.
