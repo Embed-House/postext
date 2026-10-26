@@ -1,7 +1,7 @@
 import { cjkMarkPieces } from './cjkClasses.js';
 import { hasCJK } from './cjk.js';
 import { fontStringFamily, fontStringWithFamily } from './fontString.js';
-import { breakLigatures } from './ligatureBreaks.js';
+import { hasBreakableLigature, ligatureParts, partsMetrics } from './ligatureBreaks.js';
 
 type Context2D = OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D;
 
@@ -40,7 +40,7 @@ let _language: string | undefined;
 let _ligatureBreaks = false;
 
 function cachesKey(): string {
-  return `${_language ?? HOST_LANGUAGE}${_ligatureBreaks ? '\u0001zwnj' : ''}`;
+  return `${_language ?? HOST_LANGUAGE}${_ligatureBreaks ? '\u0001fi' : ''}`;
 }
 
 /** Give `ctx` the language measured in, where the context has one. */
@@ -122,7 +122,7 @@ export function canvasText(text: string): string {
  *  context set right to left, as a right-to-left word is painted (its
  *  brackets mirrored). */
 function metricsOf(text: string, font: string, rtl = false, spacingPx = 0): TextMetrics {
-  if (_ligatureBreaks) text = breakLigatures(text);
+  if (_ligatureBreaks && hasBreakableLigature(text)) return partsMetrics(ligatureParts(text), (part) => metricsOf(part, font, rtl, spacingPx));
   let measurer: Measurer;
   let handed = text;
   if (_language === undefined) {
@@ -263,7 +263,7 @@ export function withMeasureLanguage<T>(language: string | undefined, fn: () => T
 /** The part of a measurement cache key the language decides: empty for
  *  the host's, so those keys are unchanged. */
 export function measureLanguageKey(): string {
-  return `${_language === undefined ? '' : `lg${_language}\x00`}${_ligatureBreaks ? 'zw\x00' : ''}`;
+  return `${_language === undefined ? '' : `lg${_language}\x00`}${_ligatureBreaks ? 'fi\x00' : ''}`;
 }
 
 // Word-level width cache. Text measurement is the engine's hottest call:

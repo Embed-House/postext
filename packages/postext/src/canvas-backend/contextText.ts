@@ -48,7 +48,7 @@
  * mirrored page and is called from here like the context.
  */
 
-import { paintLigatureText } from '../measure/ligatureBreaks.js';
+import { getPaintLigatureBreaks, hasBreakableLigature, ligatureParts, partsMetrics } from '../measure/ligatureBreaks.js';
 
 /** A character past Latin-1: a string that holds one is two bytes a
  *  character to the browser. */
@@ -71,7 +71,6 @@ type TextContext = Pick<CanvasRenderingContext2D, 'fillText' | 'strokeText' | 'm
  * the string all the same.
  */
 export function handedText(ctx: object, text: string): string {
-  text = paintLigatureText(text);
   const wide = WIDE_RE.test(text);
   if ('wordSpacing' in ctx) (ctx as { wordSpacing: string }).wordSpacing = wide ? WIDE_SPACING : NARROW_SPACING;
   if (wide) return text;
@@ -80,25 +79,44 @@ export function handedText(ctx: object, text: string): string {
   return out;
 }
 
+function paintedParts(ctx: object, text: string): string[] | undefined {
+  if (!getPaintLigatureBreaks() || !hasBreakableLigature(text)) return undefined;
+  // The parts are put down from the left: a centred, right-aligned or
+  // right-to-left text keeps its ligature.
+  const { textAlign, direction } = ctx as Partial<CanvasRenderingContext2D>;
+  if ((textAlign !== undefined && textAlign !== 'left' && textAlign !== 'start') || direction === 'rtl') return undefined;
+  return ligatureParts(text);
+}
+
+function putContextText(ctx: Pick<TextContext, 'measureText'>, put: (handed: string, x: number, y: number) => void, text: string, x: number, y: number): void {
+  const parts = paintedParts(ctx, text) ?? [text];
+  for (const part of parts) {
+    const handed = handedText(ctx, part);
+    put(handed, x, y);
+    if (parts.length > 1) x += ctx.measureText(handed).width;
+  }
+}
+
 /** `ctx.fillText(text, x, y)`, the text set as a fresh context sets it. */
-export function fillContextText(ctx: Pick<TextContext, 'fillText'>, text: string, x: number, y: number): void {
-  ctx.fillText(handedText(ctx, text), x, y);
+export function fillContextText(ctx: Pick<TextContext, 'fillText' | 'measureText'>, text: string, x: number, y: number): void {
+  putContextText(ctx, (handed, px, py) => ctx.fillText(handed, px, py), text, x, y);
 }
 
 /** `ctx.strokeText(text, x, y)`, as {@link fillContextText}. */
-export function strokeContextText(ctx: Pick<TextContext, 'strokeText'>, text: string, x: number, y: number): void {
-  ctx.strokeText(handedText(ctx, text), x, y);
+export function strokeContextText(ctx: Pick<TextContext, 'strokeText' | 'measureText'>, text: string, x: number, y: number): void {
+  putContextText(ctx, (handed, px, py) => ctx.strokeText(handed, px, py), text, x, y);
 }
 
 /** `ctx.measureText(text)`: the metrics {@link fillContextText} paints
  *  `text` at, in the context's font, language, spacing and direction. */
 export function measureContextText(ctx: Pick<TextContext, 'measureText'>, text: string): TextMetrics {
-  return ctx.measureText(handedText(ctx, text));
+  const parts = paintedParts(ctx, text);
+  return parts ? partsMetrics(parts, (part) => ctx.measureText(handedText(ctx, part))) : ctx.measureText(handedText(ctx, text));
 }
 
 /** The advance {@link fillContextText} paints `text` at, px. */
 export function contextTextWidth(ctx: Pick<TextContext, 'measureText'>, text: string): number {
-  return ctx.measureText(handedText(ctx, text)).width;
+  return measureContextText(ctx, text).width;
 }
 
 /** Leave a context at the word spacing a canvas has when it is given its

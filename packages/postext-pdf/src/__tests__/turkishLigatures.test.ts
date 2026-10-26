@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { breakLigatures, buildDocument, ligatureBreaksOf, ligatureParts } from 'postext';
+import { buildDocument, ligatureBreaksOf, ligatureParts } from 'postext';
 import type { PostextConfig, VDTDocument, VDTLine } from 'postext';
 import { renderToPdf } from '../pdf-backend/index.js';
 import { parseFontString } from '../fontString.js';
@@ -13,7 +13,6 @@ const fixture = (name: string) => new Uint8Array(fs.readFileSync(new URL(`./fixt
 const ALEGREYA = fixture('latin/alegreya-language.ttf');
 const fontProvider = async () => ALEGREYA;
 
-const ZWNJ = '\u200C';
 const FI = '\uFB01';
 
 function harfBuzzWidth(text: string, language?: string): number {
@@ -118,10 +117,10 @@ beforeAll(async () => {
 });
 
 describe('Turkish f + i ligatures', () => {
-  it('breaks f before i, ı and î in Turkish and Azerbaijani unless kept', () => {
-    expect(breakLigatures('fikir fıkıh Hanefî fiil Afife')).toBe(`f${ZWNJ}ikir f${ZWNJ}ıkıh Hanef${ZWNJ}î f${ZWNJ}iil Af${ZWNJ}ife`);
-    expect(breakLigatures('effi effı')).toBe(`eff${ZWNJ}i eff${ZWNJ}ı`);
-    expect(breakLigatures('flor fe')).toBe('flor fe');
+  it('cuts f from i, ı and î in Turkish and Azerbaijani unless kept', () => {
+    expect(ligatureParts('fikir fıkıh Hanefî fiil Afife')).toEqual(['f', 'ikir f', 'ıkıh Hanef', 'î f', 'iil Af', 'ife']);
+    expect(ligatureParts('effi effı')).toEqual(['eff', 'i eff', 'ı']);
+    expect(ligatureParts('flor fe')).toEqual(['flor fe']);
     expect(ligatureParts('fiil')).toEqual(['f', 'iil']);
     expect(ligatureBreaksOf({ locale: 'tr' })).toBe(true);
     expect(ligatureBreaksOf({ locale: 'tr-TR' })).toBe(true);
@@ -131,12 +130,11 @@ describe('Turkish f + i ligatures', () => {
     expect(ligatureBreaksOf({ locale: 'en', bodyText: { turkishLigatures: 'break' } })).toBe(false);
   });
 
-  it('measures a Turkish word without the ligature, and keeps the text as written', () => {
+  it('measures a Turkish word as its parts, and keeps the text as written', () => {
     const tr = firstLine(buildDocument({ markdown: WORDS }, config('tr')));
     const en = firstLine(buildDocument({ markdown: WORDS }, config('en')));
     expect(tr.text).toBe(WORDS);
-    for (const seg of tr.segments!) expect(seg.text).not.toContain(ZWNJ);
-    expect(widthsOf(tr).fil).toBe(Math.round(harfBuzzWidth(`f${ZWNJ}il`) * 1000));
+    expect(widthsOf(tr).fil).toBe(Math.round((harfBuzzWidth('f') + harfBuzzWidth('il')) * 1000));
     expect(widthsOf(en).fil).toBe(Math.round(harfBuzzWidth('fil') * 1000));
     expect(widthsOf(tr).fil).not.toBe(widthsOf(en).fil);
     expect(widthsOf(tr).naif).toBe(widthsOf(en).naif);
@@ -148,13 +146,12 @@ describe('Turkish f + i ligatures', () => {
     expect(widthsOf(keep)).toEqual(widthsOf(en));
   });
 
-  it.skipIf(!hasPdftotext)('prints each Turkish word as wide as it was measured, with no ligature and no ZWNJ in its text', async () => {
+  it.skipIf(!hasPdftotext)('prints each Turkish word as wide as it was measured, with no ligature in its text', async () => {
     const doc = buildDocument({ markdown: WORDS }, config('tr'));
     const bytes = await renderToPdf(doc, { fontProvider, accessible: false });
     const text = pdfText(bytes);
     expect(text).toContain('fil fiil naif');
     expect(text).not.toContain(FI);
-    expect(text).not.toContain(ZWNJ);
     const boxes = wordBoxes(bytes);
     const places = wordPlaces(firstLine(doc));
     expect(boxes.map((b) => b.text)).toEqual(places.map((p) => p.text));
