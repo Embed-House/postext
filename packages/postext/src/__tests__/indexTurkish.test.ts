@@ -60,7 +60,7 @@ describe('a Turkish index', () => {
     expect(lines).toEqual([
       '[Simgeler] #etiket, 1',
       '[Sayılar] 1453, 2',
-      '[F] fıkıh, 4, 5. Ayrıca bk. usûl',
+      '[F] fıkıh, 4–5. Ayrıca bk. usûl',
       '[İ] ilim. Bk. fıkıh',
       '[U] usûl, 6',
     ]);

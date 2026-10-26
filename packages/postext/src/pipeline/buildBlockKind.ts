@@ -16,8 +16,7 @@ import type { ListBulletStyle, ListItemResolved, OrderedListMetrics } from './li
 import type { HeadingLevelResolver } from './headingStyles.js';
 import { lengthAttr } from './verse.js';
 import { verseLinesSettings, versesLineByLine } from './verseLines.js';
-import { resolvedLocale } from './config.js';
-import { upperCaseFor } from '../textCase.js';
+import { getCaseLocale, upperCaseFor } from '../textCase.js';
 import {
   resolveOrderedListItemStyle,
   resolveUnorderedListItemStyle,
@@ -124,7 +123,7 @@ export function uppercasePreservingLength(text: string, locale?: unknown): strin
 
 /** A span in capitals for a paragraph style's `textTransform`, the words
  *  of a chip included; maths as it is. */
-function uppercaseSpan(span: InlineSpan, locale: string): InlineSpan {
+function uppercaseSpan(span: InlineSpan, locale: string | undefined): InlineSpan {
   if (span.math) return span;
   return {
     ...span,
@@ -183,8 +182,8 @@ export function resolveBlockKind(
       if (levelCfg?.textTransform === 'uppercase') {
         contentBlock = {
           ...contentBlock,
-          text: uppercasePreservingLength(contentBlock.text, resolvedLocale(resolved)),
-          spans: contentBlock.spans.map((s) => (s.math ? s : { ...s, text: uppercasePreservingLength(s.text, resolvedLocale(resolved)) })),
+          text: uppercasePreservingLength(contentBlock.text, getCaseLocale()),
+          spans: contentBlock.spans.map((s) => (s.math ? s : { ...s, text: uppercasePreservingLength(s.text, getCaseLocale()) })),
         };
       }
       // Forced title breaks render as spaces in the column; opener designs
@@ -323,8 +322,8 @@ export function resolveBlockKind(
       const contentBlock: ContentBlock = style.uppercase
         ? {
             ...rawBlock,
-            text: uppercasePreservingLength(rawBlock.text, resolvedLocale(resolved)),
-            spans: rawBlock.spans.map((s) => uppercaseSpan(s, resolvedLocale(resolved))),
+            text: uppercasePreservingLength(rawBlock.text, getCaseLocale()),
+            spans: rawBlock.spans.map((s) => uppercaseSpan(s, getCaseLocale())),
           }
         : rawBlock;
       return {
